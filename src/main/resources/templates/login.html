@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:security="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript"
+            th:src="@{/static/js/jquery-3.3.1.js}"></script>
+    <title>登录</title>
+</head>
+<body>
+错误信息：
+<h4 id="erro"></h4>
+<form>
+    <p>
+        账号：<input type="text" name="username" id="username"  />
+    </p>
+    <p>
+        密码：<input type="text" name="password" id="password"  />
+    </p>
+    <p>
+        <input type="button" id="ajaxLogin" value="登录" />
+    </p>
+</form>
+</body>
+<script th:inline="javascript">
+    var context = [[@{/}]];
+    var urlPath = "";
+
+    urlPath =  context;
+
+    $("#ajaxLogin").click(function() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+
+        var obj = {};
+        obj.username = username;
+        obj.password = password;
+        $.ajax({
+            url: urlPath + '/ajaxLogin',
+            type: 'POST',
+            data: $.param(obj),
+            success:function (result) {
+                if (result.status == 200) {
+                    location.href = "/index";
+                } else {
+                    $("#erro").html(result.message);
+                }
+            }
+        });
+
+
+        // $.post("/ajaxLogin", {
+        //     "username" : username,
+        //     "password" : password
+        // },
+        //     function(result) {
+        //     if (result.status == 200) {
+        //         location.href = "/index";
+        //     } else {
+        //         $("#erro").html(result.message);
+        //     }
+        // });
+    });
+</script>
+</html>

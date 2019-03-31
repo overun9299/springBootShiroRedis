@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:security="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript"
+            src="/static/js/jquery-3.3.1.js"></script>
+    <title>Title</title>
+</head>
+<body>
+helloJsp
+<input type="button" id="logout" value="退出登录" />
+</body>
+<script type="text/javascript">
+    $("#logout").click(function(){
+        location.href="/logout";
+    });
+</script>
+</html>
