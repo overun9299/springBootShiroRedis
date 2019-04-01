@@ -24,10 +24,7 @@
 </form>
 </body>
 <script th:inline="javascript">
-    var context = [[@{/}]];
-    var urlPath = "";
-
-    urlPath =  context;
+    var urlPath = [[@{/}]];
 
     $("#ajaxLogin").click(function() {
         var username = $("#username").val();
@@ -42,7 +39,7 @@
             data: $.param(obj),
             success:function (result) {
                 if (result.status == 200) {
-                    location.href = "/index";
+                    location.href = urlPath + "index";
                 } else {
                     $("#erro").html(result.message);
                 }

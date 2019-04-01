@@ -1,5 +1,6 @@
 package overun.shiro;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -7,7 +8,9 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import overun.mapper.PermissionMapper;
 import overun.mapper.UserMapper;
+import overun.model.Permission;
 import overun.model.User;
 import overun.model.UserExample;
 import overun.service.UserService;
@@ -29,6 +32,9 @@ public class MyShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
 
 
     /**
@@ -64,7 +70,7 @@ public class MyShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 授权
+     * 授权:例如按钮类授权
      * @param principalCollection
      * @return
      */
@@ -77,12 +83,18 @@ public class MyShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info =  new SimpleAuthorizationInfo();
 
         //实际开发，当前登录用户的角色和权限信息是从数据库来获取的，我这里写死是为了方便测试
-        Set<String> roleSet = new HashSet<String>();
-        roleSet.add("100002");
-        info.setRoles(roleSet);
+//        Set<String> roleSet = new HashSet<String>();
+//        roleSet.add("user:add");
+//        info.setRoles(roleSet);
 
+        //从数据库获取按钮权限
+        List<Permission> permissions = permissionMapper.selectByExample(null);
         Set<String> permissionSet = new HashSet<String>();
-        permissionSet.add("权限添加");
+        for (Permission p : permissions) {
+            if (StringUtils.isNotEmpty(p.getUrl())) {
+                permissionSet.add(p.getUrl());
+            }
+        }
         info.setStringPermissions(permissionSet);
 
         return info;
