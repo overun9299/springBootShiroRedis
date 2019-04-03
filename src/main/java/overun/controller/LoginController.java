@@ -89,6 +89,9 @@ public class LoginController {
         return "add";
     }
 
+    /**
+     * 更新权限
+     */
     @RequestMapping(value="updateshiro")
     @ResponseBody
     public void updateShiro() {
