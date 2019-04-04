@@ -31,8 +31,6 @@ public class ShiroService {
     @Autowired
     private ShiroFilterFactoryBean shiroFilterFactoryBean;
 
-    @Autowired
-    private MyShiroRealm myShiroRealm;
 
     /**
      * 重新获取权限
@@ -75,8 +73,6 @@ public class ShiroService {
             manager.getFilterChains().clear();
 
             shiroFilterFactoryBean.getFilterChainDefinitionMap().clear();
-
-            myShiroRealm.getAuthenticationCache().clear();
 
             //重新填入权限
             shiroFilterFactoryBean.setFilterChainDefinitionMap(loadFilterChainDefinitions());
