@@ -1,6 +1,8 @@
 package overun.model;
 
-public class PermissionInit {
+import java.io.Serializable;
+
+public class PermissionInit implements Serializable {
     private String id;
 
     private String url;

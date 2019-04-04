@@ -1,6 +1,8 @@
 package overun.model;
 
-public class UserRole {
+import java.io.Serializable;
+
+public class UserRole implements Serializable {
     private Long uid;
 
     private Long rid;

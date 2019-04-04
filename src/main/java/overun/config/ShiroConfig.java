@@ -110,6 +110,7 @@ public class ShiroConfig {
     public MyShiroRealm myShiroRealm() {
 
         MyShiroRealm myShiroRealm = new MyShiroRealm();
+        myShiroRealm.setCacheManager(cacheManager());
         return myShiroRealm;
     }
 
@@ -127,18 +128,18 @@ public class ShiroConfig {
      *  配置shiro redisManager
      * @return
      */
+    @Bean
     public RedisManager redisManager() {
 
         RedisManager redisManager = new RedisManager();
         //  ip
 //        redisManager.setHost(redisHost);
-        redisManager.setHost("127.0.0.1");
+        redisManager.setHost("localhost");
         //  端口
 //        redisManager.setPort(redisPort);
         redisManager.setPort(6379);
         //  过期时间
 //        redisManager.setExpire(expire);
-        redisManager.setExpire(1800);
         //  超时时间
         // redisManager.setTimeout(timeout);
         //  密码
@@ -151,6 +152,7 @@ public class ShiroConfig {
      * cacheManager 缓存 redis实现
      * @return
      */
+    @Bean
     public RedisCacheManager cacheManager() {
 
         RedisCacheManager redisCacheManager = new RedisCacheManager();
@@ -162,6 +164,7 @@ public class ShiroConfig {
      * RedisSessionDAO shiro sessionDao层的实现 通过redis
      * @return
      */
+    @Bean
     public RedisSessionDAO redisSessionDAO() {
 
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
@@ -173,6 +176,7 @@ public class ShiroConfig {
      * shiro session的管理
      * @return
      */
+    @Bean
     public DefaultWebSessionManager sessionManager() {
 
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();

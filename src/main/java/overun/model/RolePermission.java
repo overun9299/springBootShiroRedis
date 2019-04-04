@@ -1,6 +1,8 @@
 package overun.model;
 
-public class RolePermission {
+import java.io.Serializable;
+
+public class RolePermission implements Serializable {
     private Long rid;
 
     private Long pid;
