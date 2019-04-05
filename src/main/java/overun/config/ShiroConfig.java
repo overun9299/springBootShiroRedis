@@ -1,6 +1,7 @@
 package overun.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import overun.mapper.PermissionInitMapper;
 import overun.model.PermissionInit;
 import overun.shiro.MyShiroRealm;
@@ -137,10 +139,8 @@ public class ShiroConfig {
 
         RedisManager redisManager = new RedisManager();
         //  ip
-//        redisManager.setHost(redisHost);
-        redisManager.setHost("localhost");
+        redisManager.setHost(redisHost);
         //  端口
-//        redisManager.setPort(redisPort);
         redisManager.setPort(6379);
         //  过期时间
 //        redisManager.setExpire(expire);
@@ -186,6 +186,15 @@ public class ShiroConfig {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
         sessionManager.setSessionDAO(redisSessionDAO());
         return sessionManager;
+    }
+
+    /**
+     * 解决Springboot 配置类（ @Configuration） 不能使用@Value注解从application.yml中加载值
+     * @return
+     */
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
 }
