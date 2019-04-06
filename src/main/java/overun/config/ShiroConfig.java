@@ -1,6 +1,7 @@
 package overun.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -117,6 +118,7 @@ public class ShiroConfig {
     public MyShiroRealm myShiroRealm() {
 
         MyShiroRealm myShiroRealm = new MyShiroRealm();
+        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return myShiroRealm;
     }
 
@@ -143,7 +145,7 @@ public class ShiroConfig {
         //  端口
         redisManager.setPort(6379);
         //  过期时间
-//        redisManager.setExpire(expire);
+        redisManager.setExpire(expire);
         //  超时时间
         // redisManager.setTimeout(timeout);
         //  密码
@@ -161,6 +163,7 @@ public class ShiroConfig {
 
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setKeyPrefix("soap");
         return redisCacheManager;
     }
 
@@ -195,6 +198,18 @@ public class ShiroConfig {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    /**
+     * 加密方式和加密次数
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("MD5");
+        hashedCredentialsMatcher.setHashIterations(1024);
+        return hashedCredentialsMatcher;
     }
 
 }

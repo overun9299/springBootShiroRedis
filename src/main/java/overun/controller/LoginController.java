@@ -1,13 +1,16 @@
 package overun.controller;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import overun.Md5Utils;
 import overun.shiro.ShiroService;
 
 import java.util.LinkedHashMap;
@@ -51,6 +54,9 @@ public class LoginController {
             resultMap.put("status", 200);
             resultMap.put("message", "登录成功");
 
+        } catch (AuthenticationException a) {
+            resultMap.put("status", 500);
+            resultMap.put("message", "账号密码不匹配");
         } catch (Exception e) {
             resultMap.put("status", 500);
             resultMap.put("message", e.getMessage());
@@ -96,5 +102,15 @@ public class LoginController {
     @ResponseBody
     public void updateShiro() {
         shiroService.updatePermission();
+    }
+
+
+    /**
+     * 获取加密后密码
+     */
+    @RequestMapping(value = "md5")
+    @ResponseBody
+    public void getMd5(String s, String p) {
+        Md5Utils.getMd5(s,p);
     }
 }

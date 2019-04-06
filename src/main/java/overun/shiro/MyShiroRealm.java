@@ -7,6 +7,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         String password = String.valueOf(token.getPassword());
         User user = null;
         UserExample example = new UserExample();
-        example.or().andNicknameEqualTo(username).andPswdEqualTo(password);
+        example.or().andNicknameEqualTo(username);
         List<User> users = userService.selectByExample(example);
         if (users.size() > 0) {
             user = users.get(0);
@@ -68,7 +69,9 @@ public class MyShiroRealm extends AuthorizingRealm {
             user.setLastLoginTime(new Date());
             userMapper.updateByPrimaryKey(user);
         }
-        return new SimpleAuthenticationInfo(user, user.getPswd(), getName());
+        //获取盐值
+        ByteSource byteSource = ByteSource.Util.bytes(username);
+        return new SimpleAuthenticationInfo(user, user.getPswd(),byteSource, getName());
     }
 
     /**
