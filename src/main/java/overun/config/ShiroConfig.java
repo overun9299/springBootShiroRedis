@@ -150,7 +150,6 @@ public class ShiroConfig {
         // redisManager.setTimeout(timeout);
         //  密码
         // redisManager.setPassword(password);
-
         return redisManager;
     }
 
@@ -176,6 +175,7 @@ public class ShiroConfig {
 
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
         redisSessionDAO.setRedisManager(redisManager());
+        redisSessionDAO.setKeyPrefix("shiro:user2:");
         return redisSessionDAO;
     }
 

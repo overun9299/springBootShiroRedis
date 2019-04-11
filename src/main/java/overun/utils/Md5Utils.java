@@ -1,4 +1,4 @@
-package overun;
+package overun.utils;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 
