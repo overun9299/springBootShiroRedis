@@ -15,7 +15,7 @@ public class Md5Utils {
      * @param salt
      * @param password
      */
-    public static void getMd5(String salt,String password) {
+    public static String getMd5(String salt,String password) {
         // 加密方式
         String hashAlgorithmName = "MD5";
 
@@ -24,7 +24,7 @@ public class Md5Utils {
 
         Object simpleHash = new SimpleHash(hashAlgorithmName, password, salt, hashIterations);
 
-        System.out.println(simpleHash);
+        return ((SimpleHash) simpleHash).toHex();
 
     }
 

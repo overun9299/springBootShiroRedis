@@ -1,6 +1,7 @@
 package overun.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -14,11 +15,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import overun.jwt.JwtFilter;
+import overun.jwt.JwtToken;
 import overun.mapper.PermissionInitMapper;
 import overun.model.PermissionInit;
 import overun.shiro.MyShiroRealm;
 import org.apache.shiro.mgt.SecurityManager;
 
+import javax.servlet.Filter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +55,8 @@ public class ShiroConfig {
 
     @Value("${redis.expire}")
     private int expire;
+
+
 
 
     @Bean
@@ -86,6 +93,13 @@ public class ShiroConfig {
             filterChainDefinitionMap.put(p.getUrl(),p.getPermissionInit());
         }
 
+        // 添加自己的过滤器并且取名为jwt
+        Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
+        filterMap.put("jwt", new JwtFilter());
+        shiroFilterFactoryBean.setFilters(filterMap);
+
+//        filterChainDefinitionMap.put("/**","jwt");
+
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         System.out.println("Shiro拦截器工厂类注入成功");
         return shiroFilterFactoryBean;
@@ -118,7 +132,8 @@ public class ShiroConfig {
     public MyShiroRealm myShiroRealm() {
 
         MyShiroRealm myShiroRealm = new MyShiroRealm();
-        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        //使用jwt后shiro校验直接放行所以不用加密
+//        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return myShiroRealm;
     }
 

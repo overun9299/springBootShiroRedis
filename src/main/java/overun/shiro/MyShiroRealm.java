@@ -11,12 +11,14 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import overun.jwt.JwtToken;
 import overun.mapper.PermissionMapper;
 import overun.mapper.UserMapper;
 import overun.model.Permission;
 import overun.model.User;
 import overun.model.UserExample;
 import overun.service.UserService;
+import overun.utils.JWTUtil;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -40,12 +42,20 @@ public class MyShiroRealm extends AuthorizingRealm {
     private PermissionMapper permissionMapper;
 
 
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JwtToken;
+    }
+
+
     /**
+     * 不使用jwt
      * 认证信息.(身份验证) : Authentication 是用来验证用户身份
      * @param authcToken
      * @return
      * @throws AuthenticationException
      */
+    /**
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 
@@ -73,6 +83,31 @@ public class MyShiroRealm extends AuthorizingRealm {
         ByteSource byteSource = ByteSource.Util.bytes(username);
         return new SimpleAuthenticationInfo(user, user.getPswd(),byteSource, getName());
     }
+    */
+
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+        String token = (String) auth.getCredentials();
+        // 解密获得username，用于和数据库进行对比
+        String username = JWTUtil.getUsername(token);
+        if (username == null) {
+            throw new AuthenticationException("token无效");
+        }
+
+        UserExample userExample = new UserExample();
+        userExample.or().andNicknameEqualTo(username);
+        List<User> users = userService.selectByExample(userExample);
+        if ( users.size() <= 0) {
+            throw new AuthenticationException("用户不存在!");
+        }
+
+        if (!JWTUtil.verify(token, username, users.get(0).getPswd())) {
+            throw new AuthenticationException("用户名或密码错误");
+        }
+
+        return new SimpleAuthenticationInfo(users.get(0), users.get(0), "my_realm");
+    }
 
     /**
      * 授权:例如按钮类授权
@@ -83,6 +118,7 @@ public class MyShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 
         System.out.println("权限认证方法：MyShiroRealm.doGetAuthorizationInfo()");
+        /** 目前这种方式是不使用jwt时可以获取到user  ，使用了jwt后这块就会报错需要用JWTUtils通过token获取用户名在查询出user */
         User token = (User) SecurityUtils.getSubject().getPrincipal();
         Long userId = token.getId();
         SimpleAuthorizationInfo info =  new SimpleAuthorizationInfo();
